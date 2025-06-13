@@ -5,15 +5,14 @@ plugins {
 
 android {
     namespace = "com.demo.cursor"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.demo.cursor"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
     }
 
     buildTypes {
@@ -32,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -39,4 +41,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.activity.ktx)
 }

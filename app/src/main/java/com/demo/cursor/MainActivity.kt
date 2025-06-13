@@ -1,5 +1,7 @@
 package com.demo.cursor
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -35,7 +38,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBanner() {
         bannerViewPager = findViewById(R.id.bannerViewPager)
-        bannerViewPager.adapter = BannerAdapter()
+        bannerViewPager.adapter = BannerAdapter { position ->
+            if (position == 0) {
+                startActivity(Intent(this, BlankActivity::class.java))
+            }
+        }
         bannerViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         handler.postDelayed(bannerRunnable, 3000)
     }
@@ -54,13 +61,30 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
-    private val colors = listOf(
-        "#FF5722", "#2196F3"
+class BannerAdapter(private val onItemClick: (Int) -> Unit) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
+    private val items = listOf(
+        BannerItem(
+            "#4CAF50",
+            "图片拼接",
+            "将两张图片上下拼接成一张长图"
+        ),
+        BannerItem(
+            "#2196F3",
+            "更多功能",
+            "敬请期待"
+        )
+    )
+
+    data class BannerItem(
+        val color: String,
+        val title: String,
+        val description: String
     )
 
     class BannerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.bannerImage)
+        val titleView: TextView = view.findViewById(R.id.bannerTitle)
+        val descriptionView: TextView = view.findViewById(R.id.bannerDescription)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
@@ -70,10 +94,16 @@ class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
-        holder.imageView.setBackgroundColor(android.graphics.Color.parseColor(colors[position]))
+        val item = items[position]
+        holder.imageView.setBackgroundColor(Color.parseColor(item.color))
+        holder.titleView.text = item.title
+        holder.descriptionView.text = item.description
+        holder.itemView.setOnClickListener {
+            onItemClick(position)
+        }
     }
 
-    override fun getItemCount() = colors.size
+    override fun getItemCount() = items.size
 }
 
 class WaterfallAdapter : RecyclerView.Adapter<WaterfallAdapter.WaterfallViewHolder>() {
